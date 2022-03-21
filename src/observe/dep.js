@@ -1,6 +1,7 @@
 let id = 0;
 export default class Dep { // 吧watcher 放到 dep 中
   constructor() {
+    
     this.subs = [];
     this.id = id++;
   }
@@ -21,11 +22,15 @@ export default class Dep { // 吧watcher 放到 dep 中
 
   // 将 watcher 收集起来
   addSub(watcher) {
+    
     this.subs.push(watcher)
+    console.log('this.sub', this.subs);
+    
   }
 
   // 更新方法
   notify() {
+    
     this.subs.forEach(watcher => watcher.update())
   }
 }

@@ -1,4 +1,5 @@
 import Watcher from "./observe/watcher";
+import { nextTick } from "./utils/nextTick";
 import { patch } from "./vdom/patch";
 
 
@@ -26,4 +27,7 @@ export function lifecycleMixin(Vue) {
     console.log(vm);
     
   }
+
+  // 挂载nexttick 方法
+  Vue.prototype.$nextTick = nextTick
 }

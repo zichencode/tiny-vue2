@@ -34,7 +34,9 @@ methodsToPatch.forEach(method => {
     }
     // 如果有那么继续监听和劫持新增的属性
     if (newList) {
+      
       ob.observeArray(newList)
     }
+    ob.dep.notify()
   }
 })

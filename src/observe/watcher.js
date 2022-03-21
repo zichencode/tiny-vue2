@@ -1,4 +1,5 @@
 import Dep from "./dep";
+import { queueWatcher } from "./scheduler";
 
 let id = 0;
 export default class Watcher { // dep 放到 watcher 中
@@ -18,6 +19,7 @@ export default class Watcher { // dep 放到 watcher 中
     this.get(); // 初始化
   }
   addDep(dep) {
+    
     const id = dep.id;
     if (!this.depsIds.has(id)) {
       this.depsIds.add(id);
@@ -29,6 +31,8 @@ export default class Watcher { // dep 放到 watcher 中
   }
   // 初始化方法
   get() {
+    console.log('=====更新次数=====');
+    
     // 每次 new Watcher 的时候 将 类 的 赋值给 Dep
     Dep.target = this; // 利用一个变量将 watcher 传递给 dep
     
@@ -40,8 +44,15 @@ export default class Watcher { // dep 放到 watcher 中
 
   // 更新方法
   update() {
+    
     // 目前是每次 更新都会触发 渲染，所以需要 异步更新处理
-    this.get()
+    // 将更新的逻辑缓存起来，等同步更新的数据执行完成后，依次调用（也需要去重）
+    queueWatcher(this);
+    // this.get();
+  }
+
+  run() {
+    this.get();
   }
 
 }

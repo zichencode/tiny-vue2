@@ -4,7 +4,7 @@ import Dep from "./dep";
 
 /**
  * 
- * @param {*} val data 数据
+ * @param {any} val data 数据
  */
 export const observe = (data) => {
   // 如果要监听的数据不是对象直接返回
@@ -22,6 +22,9 @@ export const observe = (data) => {
 
 class Observer {
   constructor(data) {
+    // 给对象和数组的 添加 dep 属性
+    this.dep = new Dep(); // 给对象添加一个不存在的属性希望也更新视图 即 $set, todo 先不考虑对象
+
     // 给劫持的data对象 添加一个自定义属性，方便调研 观察者对象
     Object.defineProperty(data, '__ob__', {
       value: this,
@@ -32,11 +35,14 @@ class Observer {
       data.__proto__ = arrayMethods;
       // 如果数组中还是有数组或者对象 继续代理
       this.observeArray(data)
+
+      // 数组如何依赖收集 和 触发更新
     } else {
       // 遍历对象
       this.walk(data)
     }
   }
+  // 对数组进行监听
   observeArray(data) {
     data.forEach(item => observe(item))
   }
@@ -59,9 +65,9 @@ class Observer {
    * @param {*} value 要定义或修改的属性描述符
    */
   defineReactive(data, key, value) { // data里定义变量，变成响应式属性执行的方法
+    const that = this;
     // 递归监测数据
-    observe(value);
-
+    const childObj = observe(value);
     // 每个属性都添加一个 dep
     let dep = new Dep();
     
@@ -70,6 +76,14 @@ class Observer {
       get () {
         if (Dep.target) {
           dep.depend() // 收集依赖
+
+          if (childObj) { // childObj.dep 是数组或者对象的 dep
+            childObj.dep.depend() // 数组和对象 值 的 收集依赖
+            if (Array.isArray(value)) {
+              // 可以是 数组嵌套数组的情况
+              that.dependArray(value);
+            }
+          }
         }
         return value // 会向上查找
         // 不用 data[key] 的原因是会造成死循环
@@ -85,4 +99,26 @@ class Observer {
       }
     })
   }
+
+  /**
+   * 数组嵌套进行递归依赖收集
+   */
+  dependArray(value) { // [{ }, []]
+    for (let i = 0; i < value.length; i++) {
+      const cur = value[i];
+      cur.__ob__ && cur.__ob__.dep.depend(); // 收集
+      if (Array.isArray(cur)) { // 递归结束条件
+        this.dependArray(cur)
+      }
+    }
+  }
 }
+
+/**
+ * 1.默认vue在初始化的时候，会对对象每一个属性进行劫持，添加 dep 属性，当取值的时候 会做依赖收集
+ * 2.默认还会对属性值 （对象和数组本身 进行 dep 属性的添加）进行依赖收集
+ * 3.如果属性变化，触发属性对应的dep去更新
+ * 4.如果是数组进行更新，触发数组本身的dep去更新
+ * 5.如果取值的时候是数组还要让数组中的对象类型也进行（递归）依赖收集
+ * 6.如果数组里面放的是对象，默认对象里的属性是会进行依赖收集的，因为在取值的时候会进行 JSON.stringify 操作
+ */
