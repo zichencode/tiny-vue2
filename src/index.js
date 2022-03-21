@@ -7,6 +7,7 @@
  * 数据是如何变化的，在 vue2 中 通过 Object.defineProperty() 将对象中的原有属性 更改为 set 和 get 的一个属性，这样修改时 会出发set 方法 更新视图
  */
 
+import { globalAPIMixin } from "./global-api";
 import { initMixin } from "./init";
 import { lifecycleMixin } from "./lifecycle";
 import { renderMixin } from "./render";
@@ -20,6 +21,7 @@ function Vue(options) {
 initMixin(Vue)
 renderMixin(Vue)
 lifecycleMixin(Vue)
+globalAPIMixin(Vue)
 
 
 
