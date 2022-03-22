@@ -9,10 +9,12 @@ export function mountComponent (vm) {
   let updateComponent = () => {
     vm._update(vm._render())
   }
+  
   // 每个组件都有一个 watcher ，称之为渲染watcher
   new Watcher(vm, updateComponent, () => {
     console.log('更新后要做的的事情，调用钩子函数');
   }, true)
+
 
 }
 
@@ -23,11 +25,20 @@ export function lifecycleMixin(Vue) {
     // 特点 - 组件级更新 不会很耗性能 更新某个区域
 
     const vm = this;
+    console.log('---------挂载节点：内部----------');
+
     vm.$el = patch(vm.$el, vnode); // 将最新的节点挂在 $el 上
-    console.log(vm);
+      
+    console.log('---------mounted：内部生命周期----------');
     
   }
 
   // 挂载nexttick 方法
   Vue.prototype.$nextTick = nextTick
+}
+
+// 调用生命周期的钩子的统一调用函数
+export function callHook(vm, hook) {
+  let handler = vm.$options[hook]
+  handler && handler.forEach(fn => fn.call(vm)); // 钩子函数的this永远指向实例
 }

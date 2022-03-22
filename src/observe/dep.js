@@ -14,7 +14,6 @@ export default class Dep { // 吧watcher 放到 dep 中
         ---- (2) [Watcher, Watcher] 0
      */
     // this.subs.push(Dep.target) // 将 watcher 收集起来 ，watcher也要收集dep
-    console.log('----', this.id);
     
     Dep.target.addDep(this); // 调用watcher的 addDep方法
     
@@ -22,10 +21,7 @@ export default class Dep { // 吧watcher 放到 dep 中
 
   // 将 watcher 收集起来
   addSub(watcher) {
-    
     this.subs.push(watcher)
-    console.log('this.sub', this.subs);
-    
   }
 
   // 更新方法

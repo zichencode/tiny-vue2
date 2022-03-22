@@ -1,6 +1,7 @@
 import { compileToFunction } from "./complier";
-import { mountComponent } from "./lifecycle";
+import { callHook, mountComponent } from "./lifecycle";
 import { initState } from "./state";
+import { mergeOptions } from "./utils/merge-options";
 
 export function initMixin(Vue) {
 
@@ -8,14 +9,23 @@ export function initMixin(Vue) {
     // 赋值为 vm 代表 this
     const vm = this;
     
-    vm.$options = options; // 将用户的选项挂在vm上，方便后续使用
+    // 将全局的options 和 用户传来 options 合并
+    vm.$options = mergeOptions(vm.constructor.options, options); // 将用户的选项挂在vm上，方便后续使用
 
     // 初始化数据
     initState(vm)
 
+    // 挂在前
+    console.log('---------beforeCreate：内部生命周期----------');
+    callHook(vm, 'beforeCreate')
+    console.log('---------created：内部生命周期----------');
+    callHook(vm, 'created')
+
     if (vm.$options.el) {
       console.log('开始挂载了');
       this.$mount(vm.$options.el)
+      callHook(vm, 'mounted')
+
       // 数据劫持后的操作
       // 数据变了，就需要更新视图 diff算法 更新需要更新的地方
       // 操作字符串 性能不高 每次都要重写替换模版
@@ -42,8 +52,12 @@ export function initMixin(Vue) {
       if (!vm.$options.template) {
         vm.$options.template = el.outerHTML;
       }
+      
       // 最后都挂在render上
       vm.$options.render = compileToFunction(vm.$options.template);
+
+      console.log('---------beforeMount：内部生命周期----------');
+      callHook(vm, 'beforeMount')
 
       // 加载生命周期
       mountComponent(vm)

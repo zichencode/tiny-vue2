@@ -2,7 +2,6 @@ const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g; // {{   xxx  }}
 
 // 拼接属性
 function genProps(attrs) {
-  console.log('attrs',attrs);
   let str = '';
   for (let i = 0; i < attrs.length; i++) {
     const ele = attrs[i];

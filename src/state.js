@@ -2,6 +2,8 @@ import { observe } from "./observe";
 import { isType } from "./utils";
 
 export function initState(vm) {
+  console.log('---------initData：内部初始化数据----------');
+
   const opts = vm.$options;
 
   if (opts.data) {

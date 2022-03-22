@@ -51,8 +51,6 @@ class Observer {
    * @param {required} data 用来循环的对象
    */
   walk(data) {
-    console.log('data====', data);
-    
     Object.keys(data).forEach(key => { // 使用defineProperty 重新定义
       this.defineReactive(data, key, data[key]) 
     })
