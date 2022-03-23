@@ -7,10 +7,12 @@
  * 数据是如何变化的，在 vue2 中 通过 Object.defineProperty() 将对象中的原有属性 更改为 set 和 get 的一个属性，这样修改时 会出发set 方法 更新视图
  */
 
+import { compileToFunction } from "./complier";
 import { globalAPIMixin } from "./global-api";
 import { initMixin } from "./init";
 import { lifecycleMixin } from "./lifecycle";
 import { renderMixin } from "./render";
+import { createEle, patch } from "./vdom/patch";
 
 // 原型模式实现 - 功能通过原型扩展添加
 function Vue(options) {
@@ -23,6 +25,36 @@ renderMixin(Vue)
 lifecycleMixin(Vue)
 globalAPIMixin(Vue)
 
+/** ------测试dom diff------ */
+var vm1 = new Vue({
+   data() {
+      return {name: 'zichen', arr: 'cc'}
+   }
+})
+let render1 = compileToFunction(`<div>{{name}}</div>`);
+
+let oldNode = render1.call(vm1);
+
+let el1 = createEle(oldNode);
+
+document.body.appendChild(el1);
+
+var vm2 = new Vue({
+   data() {
+      return {name: 'ly', arr: 'cc'}
+   }
+})
+let render2 = compileToFunction(`<div>{{name}}</div>`);
+
+let newNode = render2.call(vm2);
+
+let el2 = createEle(newNode);
+
+setTimeout(() => {
+   // document.body.removeChild(el1);
+   // document.body.appendChild(el2);
+   patch(oldNode, newNode); // 比对两个虚拟dom的节点，只更改需要更新的地方就行
+},5000)
 
 
 export default Vue;

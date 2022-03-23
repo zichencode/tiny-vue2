@@ -26,7 +26,8 @@ export function lifecycleMixin(Vue) {
 
     const vm = this;
     console.log('---------挂载节点：内部----------');
-
+    // 初次加载 直接根据虚拟节点渲染成真实dom，替换原来的节点
+    // 以后更新时 生成新的 虚拟dom 后 这里需要做一些优化 虚拟dom 对比 优化
     vm.$el = patch(vm.$el, vnode); // 将最新的节点挂在 $el 上
       
     console.log('---------mounted：内部生命周期----------');

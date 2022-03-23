@@ -14,7 +14,7 @@ export function patch(el, vnode) {
 }
 
 // 虚拟节点的实现 和 如何将虚拟节点渲染成真实节点的
-function createEle(vnode) {
+export function createEle(vnode) {
   let {tag, data, children, text, vm} = vnode;
   // 让虚拟节点和真实节点做一个映射关系，后续虚拟节点更新了 可以跟踪到真实节点，并更新真实dom
   if (typeof tag === 'string') { // 标签
