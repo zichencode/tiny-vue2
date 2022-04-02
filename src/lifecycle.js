@@ -5,7 +5,7 @@ import { patch } from "./vdom/patch";
 
 // 数据挂在
 export function mountComponent (vm) {
-  // 初始化流程
+  // 初始化流程&更新流程
   let updateComponent = () => {
     vm._update(vm._render())
   }
@@ -14,7 +14,6 @@ export function mountComponent (vm) {
   new Watcher(vm, updateComponent, () => {
     console.log('更新后要做的的事情，调用钩子函数');
   }, true)
-
 
 }
 
@@ -28,7 +27,17 @@ export function lifecycleMixin(Vue) {
     console.log('---------挂载节点：内部----------');
     // 初次加载 直接根据虚拟节点渲染成真实dom，替换原来的节点
     // 以后更新时 生成新的 虚拟dom 后 这里需要做一些优化 虚拟dom 对比 优化
-    vm.$el = patch(vm.$el, vnode); // 将最新的节点挂在 $el 上
+    // 区分是初次渲染还是 第二次虚拟dom比对
+
+    let preVnode = vm._preVnode;
+
+    vm._preVnode = vnode;
+
+    if (!preVnode) { // 初次渲染
+      vm.$el = patch(vm.$el, vnode); // 将最新的节点挂在 $el 上
+    } else {
+      vm.$el = patch(preVnode, vnode); // 更新
+    }
       
     console.log('---------mounted：内部生命周期----------');
     

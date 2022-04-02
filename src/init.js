@@ -9,9 +9,11 @@ export function initMixin(Vue) {
     // 赋值为 vm 代表 this
     const vm = this;
     
-    // 将全局的options 和 用户传来 options 合并
+    // 将全局的options 混合到实例上 和 用户传来 options 合并
     vm.$options = mergeOptions(vm.constructor.options, options); // 将用户的选项挂在vm上，方便后续使用
 
+    console.log('vm.$options', vm.$options);
+    
     // 初始化数据
     initState(vm)
 
@@ -51,7 +53,7 @@ export function initMixin(Vue) {
       // render 不存在的找 template 
       if (!vm.$options.template) {
         vm.$options.template = el.outerHTML;
-      }
+      }  
       
       // 最后都挂在render上
       vm.$options.render = compileToFunction(vm.$options.template);

@@ -26,35 +26,47 @@ lifecycleMixin(Vue)
 globalAPIMixin(Vue)
 
 /** ------测试dom diff------ */
-var vm1 = new Vue({
-   data() {
-      return {name: 'zichen', arr: 'cc'}
-   }
-})
-let render1 = compileToFunction(`<div>{{name}}</div>`);
+// var vm1 = new Vue({
+//    data() {
+//       return {name: 'zichen', arr: 'cc'}
+//    }
+// })
+// let render1 = compileToFunction(`<div>
+//    <li key="A">A</li>
+//    <li key="B">B</li>
+//    <li key="C">C</li>
+//    <li key="D">D</li>
+// </div>`);
 
-let oldNode = render1.call(vm1);
+// let oldNode = render1.call(vm1);
 
-let el1 = createEle(oldNode);
+// let el1 = createEle(oldNode);
 
-document.body.appendChild(el1);
+// document.body.appendChild(el1);
 
-var vm2 = new Vue({
-   data() {
-      return {name: 'ly', arr: 'cc'}
-   }
-})
-let render2 = compileToFunction(`<div>{{name}}</div>`);
+// var vm2 = new Vue({
+//    data() {
+//       return {name: 'ly', arr: 'cc'}
+//    }
+// })
+// let render2 = compileToFunction(`<div>
+//    <li key="F" style="color:red">F</li>
+//    <li key="B" style="color:red">B</li>
+// <li key="A" style="color:red">A</li>
+//    <li key="E" style="color:red">E</li>
 
-let newNode = render2.call(vm2);
 
-let el2 = createEle(newNode);
+// </div>`);
 
-setTimeout(() => {
-   // document.body.removeChild(el1);
-   // document.body.appendChild(el2);
-   patch(oldNode, newNode); // 比对两个虚拟dom的节点，只更改需要更新的地方就行
-},5000)
+// let newNode = render2.call(vm2);
+
+// let el2 = createEle(newNode);
+
+// setTimeout(() => {
+//    // document.body.removeChild(el1);
+//    // document.body.appendChild(el2);
+//    patch(oldNode, newNode); // 比对两个虚拟dom的节点，只更改需要更新的地方就行
+// },5000)
 
 
 export default Vue;

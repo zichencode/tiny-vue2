@@ -22,6 +22,15 @@ lifeCycle.forEach((hook) => {
   }
 })
 
+// 组件的策略 
+strats.components = function(parentVal, childVal) {
+  let res = Object.create(parentVal); // 合并后产生一个
+  for (const key in childVal) {
+    res[key] = childVal[key]
+  }
+  return res;
+}
+
 export function mergeOptions(parentVal, childVal) {
   const opts = {};
 

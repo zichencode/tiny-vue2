@@ -1,5 +1,34 @@
+import { isObject, isReservedTag } from "../utils";
+// 创建组件的虚拟节点
+function createComponent(vm, tag, data, children, key, Ctor) {
+  if(isObject(Ctor)) { // 如果是对象的话需要通过 extend 方法包装下
+    Ctor = vm.$options._base.extend(Ctor)
+  }
+  // 组件的生命周期
+  data.hook = {
+    init(vnode) {
+      // vnode.componentInstance 为了标示 是否渲染完挂载真实节点
+      let child = vnode.componentInstance = new Ctor({}); // 初始化子组件
+      child.$mount();
+      // mount 挂载完成后产生一个真实 el 节点
+    },
+    prepatch() {
+
+    },
+    postpatch() {
+      
+    }
+  }
+  return vnode({vm, tag: `vue-component-${tag}`, data, key, componentOptions: {Ctor, children, tag}}) // componentOptions 存放了 Ctor
+}
 // 虚拟dom方法
 export function createElement(vm, tag, data={}, ...children) {
+  // 区分元素节点和组件
+  if (!isReservedTag(tag)) {
+    // 组件的定义， 初始化的时候可以 new
+    const Ctor = vm.$options.components[tag];
+    return createComponent(vm, tag, data, children, data.key, Ctor)
+  }
   return vnode({vm, tag, data, children, key: data.key})
 }
 
@@ -16,8 +45,8 @@ export function isSameVnode(newVnode, oldVnode) {
 }
 
 // 对象用来描述节点的
-function vnode({vm, tag, data, children, key, text}) {
-  return {vm, tag, data, children, key, text}
+function vnode({vm, tag, data, children, key, text, componentOptions}) {
+  return {vm, tag, data, children, key, text, componentOptions}
 }
 /**
  * vnode 是一个对象 用来描述节点的 和 ast 很像
