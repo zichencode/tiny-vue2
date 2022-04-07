@@ -109,3 +109,14 @@ Vue.component('async-comp', () => new Promise((resolve, reject) => {
 1. vm._vnode 是组件真实要渲染的dom 节点， <button></button>
 2. vm.$vnode 是组件节点， <el-button></el-button>
 3. vm._vnode.parent === vm.$vnode
+
+### keep-alive
+1. 初始化渲染过程
+   1. 取当前keep-alive 中第一个组件，拿到后把组件实例缓存起来，超过限制后只会缓存第一个
+2. 更新流程
+   1. 走的keep-alive 的 diff 比对，两个都是组件，在 updateChildComponent 方法中比对 插槽内容，如果有标记，不会走初始化流程，直接从缓存取出来复用
+
+## 组件的 v-model 和 普通元素上的 v-model 有什么区别？
+1. v-model 和 :value + @input 在中文输入上有细微的差别
+2. 通过 onCompositionStart 和 onCompositionEnd 两个方法去控制，通过 e.target.composing 属性
+3. .sync 事件是在 编译层做的 -- vue3废弃了 
